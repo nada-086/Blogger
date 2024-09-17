@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+{% block content %}
+    <br/>
+    <h1>Readers and Authors</h1>
+    {% for user in users %}
+        <br />
+        <div class="card w-75">
+            <div class="card-body">
+                <h5 class="card-title">{{ user.name }}</h5>
+                <p class="card-text">Current Role: {{ user.role }}</p>
+                <p class="card-text">Joined At: {{ user.date_added.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                <a href="/user/promote_user/{{ user.id }}" class="btn btn-primary">Promote</a>
+            </div>
+        </div>
+    {% endfor %}
+    <br/>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title">{{ user.name }}</h1>
+            <p class="card-text"><strong>Email: </strong>{{ user.email }}</p>
+            <p class="card-text"><strong>Role:</strong> {{ user.role }}</p>
+            <p class="card-text"><strong>Joint At:</strong> {{ user.date_added.strftime('%B %d, %Y at %I:%M %p') }}</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Your Blogs</h3>
+                {% if current_user.role != "Reader" %}
+                <a href="/blogs/create" class="btn btn-success btn-lg active" role="button" aria-pressed="true">Create
+                    Blog</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            {% if blogs %}
+            {% for blog in blogs %}
+                <br />
+                <div class="card w-75">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ blog.title }}</h5>
+                        <p class="card-text">{{ blog.description }}</p>
+                        <a href="/blogs/{{ blog.id }}" class="btn btn-primary">View</a>
+                        <a href="/blogs/{{ blog.id }}/edit" class="btn btn-primary">Edit</a>
+                        <a href="/blogs/{{ blog.id }}/delete" class="btn btn-primary">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">You haven't posted any blogs yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<br/>
+{% endblock %}

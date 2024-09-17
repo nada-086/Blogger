@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <br />
+    <h1>Blogs</h1>
+    {% for blog in blogs %}
+    <br />
+    <div class="card w-75">
+        <div class="card-body">
+            <h5 class="card-title">{{ blog.title }}</h5>
+            <p class="card-text">{{ blog.description }}</p>
+            <a href="/blogs/{{ blog.id }}" class="btn btn-primary">View</a>
+            <a href="/blogs/{{ blog.id }}/edit" class="btn btn-primary">Edit</a>
+            <a href="/blogs/{{ blog.id }}/delete" class="btn btn-primary">Delete</a>
+        </div>
+    </div>
+    {% endfor %}
+    <br />
+{% endblock %}
