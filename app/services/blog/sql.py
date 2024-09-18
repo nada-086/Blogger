@@ -1,12 +1,12 @@
-from app.models.blog import Blog
-from app.models.user import User
-from app.models.blog_action import BlogAction
+from app.models.sql.blog import Blog
+from app.models.sql.user import User
+from app.models.sql.blog_action import BlogAction
 from flask_sqlalchemy import SQLAlchemy
 from flask_injector import inject
-from flask_login import login_user
+from flask_login import current_user
 
 
-class BlogService:
+class SQLiteBlogService:
     @inject
     def __init__(self, db: SQLAlchemy):
         self.db = db
@@ -36,13 +36,16 @@ class BlogService:
         self.db.session.commit()
 
     def delete(self, blog):
-        self.db.session.delete(blog)
-        self.db.session.commit()
+        if blog.author_id == current_user.id or current_user.role == "Admin":
+            self.db.session.delete(blog)
+            self.db.session.commit()
+        else:
+            raise Exception("Unauthorized Action.")
 
 
-    def like(self, blog, user):
-        existing_action = self.db.session.query(BlogAction).filter_by(user_id=user.id, blog_id=blog.id).first()
 
+    def like(self, blog, user_id):
+        existing_action = self.db.session.query(BlogAction).filter_by(user_id=user_id, blog_id=blog.id).first()
         if existing_action:
             if existing_action.action == 'like':
                 raise Exception('You have already liked this blog.')
@@ -51,15 +54,14 @@ class BlogService:
                 blog.likes += 1
                 blog.dislikes -= 1
         else:
-            blog_action = BlogAction(user_id=user.id, blog_id=blog.id, action='like')
+            blog_action = BlogAction(user_id=user_id, blog_id=blog.id, action='like')
             blog.likes += 1
             self.db.session.add(blog_action)
-
         self.db.session.commit()
 
-    def dislike(self, blog, user):
-        existing_action = self.db.session.query(BlogAction).filter_by(user_id=user.id, blog_id=blog.id).first()
 
+    def dislike(self, blog, user_id):
+        existing_action = self.db.session.query(BlogAction).filter_by(user_id=user_id, blog_id=blog.id).first()
         if existing_action:
             if existing_action.action == 'dislike':
                 raise Exception('You have already disliked this blog.')
@@ -68,8 +70,7 @@ class BlogService:
                 blog.likes -= 1
                 blog.dislikes += 1
         else:
-            blog_action = BlogAction(user_id=user.id, blog_id=blog.id, action='dislike')
+            blog_action = BlogAction(user_id=user_id, blog_id=blog.id, action='dislike')
             blog.dislikes += 1
             self.db.session.add(blog_action)
-
         self.db.session.commit()

@@ -15,7 +15,7 @@
 
 <body>
     {% if not current_user.is_authenticated %}
-        {% include 'home.html' %}
+        {% include './user/login.html' %}
     {% elif current_user.role != "Admin" %}
         {% include './navbar/reader.html' %}
     {% else %}
