@@ -2,8 +2,8 @@ from flask import Flask, redirect
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from app.models.user import User
-
+from mongoengine import connect
+from bson import ObjectId
 
 db = SQLAlchemy()
 
@@ -14,8 +14,14 @@ def create_app():
     # Load the Configuration
     app.config.from_object(Config)
 
-    # Initialize the database and login manager
-    db.init_app(app)
+    # Initialize the correct database based on configuration
+    if Config.DATABASE_TYPE == 'sqlite':
+        db.init_app(app)
+    else:
+        connect(
+            db=app.config['MONGO_DBNAME'],
+            host=app.config['MONGO_URI']
+        )
 
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
@@ -34,6 +40,14 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        if Config.DATABASE_TYPE == 'sqlite':
+            from app.models.sql.user import User
+            return User.query.get(user_id)
+        else:
+            from app.models.mongo.user import User
+            try:
+                return User.objects.get(id=user_id)
+            except (User.DoesNotExist, ValueError):
+                return None
 
     return app

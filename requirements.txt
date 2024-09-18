@@ -1,0 +1,7 @@
+Flask
+flask_login
+flask_sqlalchemy
+mongoengine
+flask_inject
+python_dotenv
+werkzeug

@@ -8,7 +8,7 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False, unique=True)
     description = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.String(20), nullable=False, unique=True)
+    content = db.Column(db.String(20), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     likes = db.Column(db.Integer, default=0)
