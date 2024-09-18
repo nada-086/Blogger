@@ -47,7 +47,7 @@ def create_app():
             from app.models.mongo.user import User
             try:
                 return User.objects.get(id=user_id)
-            except (User.DoesNotExist, ValueError):
+            except Exception:
                 return None
 
     return app

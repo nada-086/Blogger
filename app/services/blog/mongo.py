@@ -35,7 +35,7 @@ class MongoBlogService:
         blog.update(set__title=title, set__content=content, set__description=description)
 
     def delete(self, blog):
-        if blog.author_id == current_user.id or current_user.role == "Admin":
+        if blog.author_id.id == current_user.id or current_user.role == "Admin":
             blog.delete()
         else:
             raise Exception("Unauthorized Action.")
